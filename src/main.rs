@@ -1,14 +1,16 @@
-use image::{GenericImageView, ImageReader};
+use image::{DynamicImage, GenericImageView, ImageReader};
 
 const IMAGE_SRC: &str = "./inputs/shawn.png";
 const ASCII_RAMP: &str = ".:-=+*#%@";
 
 fn main() {
     let img = ImageReader::open(IMAGE_SRC).unwrap().decode().unwrap();
-    let _height = img.height();
-    let width = img.width();
+    let new_width = 100;
 
-    for (x, _y, pixel) in img.pixels() {
+    let resized = resize(img, new_width);
+    let width = resized.width();
+
+    for (x, _y, pixel) in resized.pixels() {
         let [r, g, b, _a] = pixel.0;
 
         // Gemini: luminance standard formula
@@ -29,4 +31,15 @@ fn map_to_ascii(lightness: u8) -> char {
     let index = (lightness as f32 / 255.0 * (ASCII_RAMP.len() - 1) as f32).round() as usize;
 
     ASCII_RAMP.as_bytes()[index] as char
+}
+
+fn resize(img: DynamicImage, new_width: u32) -> DynamicImage {
+    let ratio = new_width as f32 / img.width() as f32;
+    let new_height = img.height() as f32 * ratio;
+
+    img.resize_exact(
+        new_width,
+        (new_height * 0.5) as u32,
+        image::imageops::FilterType::Lanczos3,
+    )
 }
