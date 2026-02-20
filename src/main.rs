@@ -4,6 +4,8 @@ mod my_image;
 use image::DynamicImage;
 use my_image::{draw, load_image, resize};
 
+use crate::my_image::DrawArgs;
+
 fn main() {
     // load image from disk
     let args = cli::parse();
@@ -14,7 +16,13 @@ fn main() {
     let resized = resize(img, new_width, new_height);
 
     // draw image to terminal
-    draw(resized);
+    draw(
+        resized,
+        DrawArgs {
+            color: args.color,
+            edge: args.edge,
+        },
+    );
 }
 
 fn scale_terminal(img: DynamicImage) -> (u32, u32) {

@@ -22,7 +22,12 @@ pub fn resize(img: DynamicImage, new_width: u32, new_height: u32) -> DynamicImag
     img.resize_exact(new_width, new_height, image::imageops::FilterType::Lanczos3)
 }
 
-pub fn draw(img: DynamicImage) {
+pub struct DrawArgs {
+    pub color: bool,
+    pub edge: bool,
+}
+
+pub fn draw(img: DynamicImage, args: DrawArgs) {
     let width = img.width();
 
     // Gemini: calculate horizontal gradients
@@ -35,31 +40,43 @@ pub fn draw(img: DynamicImage) {
     for (x, y, pixel) in img.pixels() {
         let [r, g, b, _a] = pixel.0;
 
-        // Gemini: calculate gradient magnitude and angle
-        let dx = gx.get_pixel(x, y)[0] as f32;
-        let dy = gy.get_pixel(x, y)[0] as f32;
-        let magnitude = (dx.powi(2) + dy.powi(2)).sqrt();
-        let angle = dy.atan2(dx);
-
         // Gemini: luminance standard formula
         let brightess = (r as f32 * 0.2126 + g as f32 * 0.7152 + b as f32 * 0.0722) as u8;
+        let character;
 
-        let character = if magnitude > 100.0 {
-            let deg = angle.to_degrees();
-            if (deg > -22.5 && deg <= 22.5) || (deg > 157.5 || deg <= -157.5) {
-                '|'
-            } else if (deg > 22.5 && deg <= 67.5) || (deg > -157.5 && deg <= -112.5) {
-                '/'
-            } else if (deg > 67.5 && deg <= 112.5) || (deg > -112.5 && deg <= -67.5) {
-                '-'
+        // calculate edges
+        if args.edge {
+            // Gemini: calculate gradient magnitude and angle
+            let dx = gx.get_pixel(x, y)[0] as f32;
+            let dy = gy.get_pixel(x, y)[0] as f32;
+            let magnitude = (dx.powi(2) + dy.powi(2)).sqrt();
+            let angle = dy.atan2(dx);
+
+            character = if magnitude > 100.0 {
+                let deg = angle.to_degrees();
+                if (deg > -22.5 && deg <= 22.5) || (deg > 157.5 || deg <= -157.5) {
+                    '|'
+                } else if (deg > 22.5 && deg <= 67.5) || (deg > -157.5 && deg <= -112.5) {
+                    '/'
+                } else if (deg > 67.5 && deg <= 112.5) || (deg > -112.5 && deg <= -67.5) {
+                    '-'
+                } else {
+                    '\\'
+                }
             } else {
-                '\\'
-            }
+                map_to_ascii(brightess)
+            };
         } else {
-            map_to_ascii(brightess)
-        };
+            character = map_to_ascii(brightess);
+        }
 
-        write!(stdout, "{}", character.to_string().truecolor(r, g, b)).unwrap();
+        // print output
+        if args.color {
+            write!(stdout, "{}", character.to_string().truecolor(r, g, b)).unwrap();
+        } else {
+            write!(stdout, "{}", character).unwrap();
+        }
+
         if x == width - 1 {
             writeln!(stdout).unwrap();
         }
