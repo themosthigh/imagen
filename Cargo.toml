@@ -4,7 +4,15 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
+clap = { version = "4.5.60", features = ["derive"] }
 colored = "3.1.1"
 crossterm = "0.29.0"
 image = "0.25.9"
 imageproc = "0.26.0"
+
+[profile.release]
+opt-level = "z"   # Optimize for size
+lto = true        # Enable Link Time Optimization
+codegen-units = 1 # Reduce parallel code generation
+panic = "abort"   # Remove panic-unwinding code
+strip = true      # Strip symbols (available in Rust 1.59+)

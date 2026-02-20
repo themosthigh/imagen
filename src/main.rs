@@ -1,13 +1,13 @@
+mod cli;
 mod my_image;
 
 use image::DynamicImage;
 use my_image::{draw, load_image, resize};
 
-const IMAGE_SRC: &str = "./inputs/shawn.png";
-
 fn main() {
     // load image from disk
-    let img = load_image(IMAGE_SRC);
+    let args = cli::parse();
+    let img = load_image(&args.file);
 
     // resize image to terminal width
     let (new_width, new_height) = scale_terminal(img.clone());
