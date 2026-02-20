@@ -35,5 +35,10 @@ fn scale_terminal(img: DynamicImage) -> (u32, u32) {
         new_width = new_height * image_aspect / font_aspect;
     }
 
+    if new_width > term_w as f32 {
+        new_width = term_w as f32;
+        new_height = new_width / image_aspect * font_aspect;
+    }
+
     (new_width as u32, new_height as u32)
 }
