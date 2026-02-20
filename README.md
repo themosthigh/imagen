@@ -2,7 +2,8 @@
 
 A simple ascii image rendering tool
 
-<img width="1958" height="2162" alt="Screenshot From 2026-02-20 22-20-37" src="https://github.com/user-attachments/assets/857e56bd-38d2-4df7-9c0f-2f8b082af6c4" />
+<img width="1958" height="2162" alt="Screenshot From 2026-02-20 23-22-10" src="https://github.com/user-attachments/assets/a54af0a1-76e5-4f64-8689-73cdd0b24d5b" />
+
 
 ## Running the project
 
@@ -18,10 +19,20 @@ cargo run <image_path>
 - [x] Rendering pixel colors
 - [x] Resizing image to terminal window size (retaining image aspect ratio)
 - [x] Passing image path as arg
-- [ ] Flags
-  - [ ] Grayscale vs color
-  - [ ] Edge detection
+- [x] Flags
+  - [x] Grayscale vs color
+  - [x] Edge detection
 - [ ] TUI mode
   - [ ] Image framing
   - [ ] File picker/browser
   - [ ] Repaint on screen resize
+
+## Usage
+
+You may need to enable color and edge detection
+
+```bash
+cargo run <image_path> --color --egd
+```
+
+<img width="1958" height="2162" alt="Screenshot From 2026-02-20 23-19-51" src="https://github.com/user-attachments/assets/90e64f6c-552d-458e-8216-e880e0430c80" />
