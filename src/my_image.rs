@@ -16,15 +16,8 @@ fn map_to_ascii(lightness: u8) -> char {
     ASCII_RAMP.as_bytes()[index] as char
 }
 
-pub fn resize(img: DynamicImage, new_width: u32) -> DynamicImage {
-    let ratio = new_width as f32 / img.width() as f32;
-    let new_height = img.height() as f32 * ratio;
-
-    img.resize_exact(
-        new_width,
-        (new_height * 0.5) as u32,
-        image::imageops::FilterType::Lanczos3,
-    )
+pub fn resize(img: DynamicImage, new_width: u32, new_height: u32) -> DynamicImage {
+    img.resize_exact(new_width, new_height, image::imageops::FilterType::Lanczos3)
 }
 
 pub fn draw(img: DynamicImage) {
