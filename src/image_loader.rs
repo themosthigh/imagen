@@ -18,7 +18,7 @@ fn scale_terminal(img: DynamicImage) -> (u32, u32) {
     let (term_w, term_h) = crossterm::terminal::size().unwrap();
 
     // calculate image aspect ratio
-    let image_aspect = img.height() as f32 / img.width() as f32;
+    let image_aspect = img.width() as f32 / img.height() as f32;
     let font_aspect = 0.5;
 
     // calculate new image size
