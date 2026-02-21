@@ -7,8 +7,11 @@ fn main() {
     let args = cli::parse();
     let r = image_loader::loader(&args);
 
-    let color = args.color;
-    let edge = args.edge;
-
-    draw_print(r, DrawArgs { color, edge });
+    draw_print(
+        r,
+        DrawArgs {
+            color: args.color,
+            edge: args.edge,
+        },
+    );
 }
