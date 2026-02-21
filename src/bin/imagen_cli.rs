@@ -1,10 +1,7 @@
-mod cli;
-mod my_image;
-
 use image::DynamicImage;
-use my_image::{draw, load_image, resize};
 
-use crate::my_image::DrawArgs;
+use imagen::cli;
+use imagen::my_image::{DrawArgs, draw_print, load_image, resize};
 
 fn main() {
     // load image from disk
@@ -16,7 +13,7 @@ fn main() {
     let resized = resize(img, new_width, new_height);
 
     // draw image to terminal
-    draw(
+    draw_print(
         resized,
         DrawArgs {
             color: args.color,

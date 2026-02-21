@@ -1,8 +1,7 @@
-use std::io::{self, Write};
-
 use colored::*;
 use image::{DynamicImage, GenericImageView, ImageReader};
 use imageproc::gradients::horizontal_sobel;
+use std::fmt::Write;
 
 const ASCII_RAMP: &str = ".:-=+*#%@";
 
@@ -27,15 +26,15 @@ pub struct DrawArgs {
     pub edge: bool,
 }
 
-pub fn draw(img: DynamicImage, args: DrawArgs) {
-    let width = img.width();
+pub fn draw(img: DynamicImage, args: DrawArgs) -> String {
+    let height = img.height() as usize;
+    let width = img.width() as usize;
+    let mut output = String::with_capacity((height * width * 25) as usize);
 
     // Gemini: calculate horizontal gradients
     let gray = img.to_luma8();
     let gx = horizontal_sobel(&gray);
     let gy = horizontal_sobel(&gray);
-
-    let mut stdout = io::BufWriter::new(io::stdout());
 
     for (x, y, pixel) in img.pixels() {
         let [r, g, b, _a] = pixel.0;
@@ -72,15 +71,19 @@ pub fn draw(img: DynamicImage, args: DrawArgs) {
 
         // print output
         if args.color {
-            write!(stdout, "{}", character.to_string().truecolor(r, g, b)).unwrap();
+            write!(output, "{}", character.to_string().truecolor(r, g, b)).unwrap();
         } else {
-            write!(stdout, "{}", character).unwrap();
+            write!(output, "{}", character).unwrap()
         }
 
-        if x == width - 1 {
-            writeln!(stdout).unwrap();
+        if x == width as u32 - 1 {
+            writeln!(output).unwrap()
         }
     }
 
-    stdout.flush().unwrap();
+    output
+}
+
+pub fn draw_print(img: DynamicImage, args: DrawArgs) {
+    println!("{}", draw(img, args))
 }
