@@ -1,49 +1,14 @@
-use image::DynamicImage;
-
-use imagen::cli;
-use imagen::my_image::{DrawArgs, draw_print, load_image, resize};
+use imagen::{
+    cli, image_loader,
+    my_image::{DrawArgs, draw_print},
+};
 
 fn main() {
-    // load image from disk
     let args = cli::parse();
-    let img = load_image(&args.file);
+    let r = image_loader::loader(&args);
 
-    // resize image to terminal width
-    let (new_width, new_height) = scale_terminal(img.clone());
-    let resized = resize(img, new_width, new_height);
+    let color = args.color;
+    let edge = args.edge;
 
-    // draw image to terminal
-    draw_print(
-        resized,
-        DrawArgs {
-            color: args.color,
-            edge: args.edge,
-        },
-    );
-}
-
-fn scale_terminal(img: DynamicImage) -> (u32, u32) {
-    // get terminal size
-    let (term_w, term_h) = crossterm::terminal::size().unwrap();
-
-    // calculate image aspect ratio
-    let image_aspect = img.height() as f32 / img.width() as f32;
-    let font_aspect = 0.5;
-
-    // calculate new image size
-    let mut new_width: f32 = term_w as f32;
-    let mut new_height: f32 = img.height() as f32 / image_aspect * font_aspect;
-
-    // adjust for retained aspect ratio
-    if new_height > term_h as f32 {
-        new_height = term_h as f32;
-        new_width = new_height * image_aspect / font_aspect;
-    }
-
-    if new_width > term_w as f32 {
-        new_width = term_w as f32;
-        new_height = new_width / image_aspect * font_aspect;
-    }
-
-    (new_width as u32, new_height as u32)
+    draw_print(r, DrawArgs { color, edge });
 }
